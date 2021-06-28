@@ -7,13 +7,11 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Copy folder content recursively to remote
-      uses: garygrossgarten/github-action-scp@release
-      with:
-        local: .
-        remote: /var/www/html
-        host: ${{ secrets.TEST_HOST }}
-        port: ${{ secrets.TEST_PORT}}
-        username: ${{ secrets.TEST_USERNAME }}
-        password: ${{ secrets.TEST_PASSWORD }}        
+      # Must checkout first, otherwise would get empty folder, see https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+      # Modify `master` to valid version, from https://github.com/marketplace/actions/action-rsync
+      - uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.TEST_HOST }}
+          KEY: ${{ secrets.TEST_SSH_KEY }}
+          TARGET: /var/www/html/       
